@@ -73,12 +73,13 @@ Because your `.env` file (which holds your API keys) is hidden from GitHub for s
 1. Scroll down and click on **Advanced** or navigate to the **Environment** tab on Render.
 2. Click **Add Environment Variable** to add each variable:
 
-| Key | Value |
-| :--- | :--- |
-| `MONGODB_URI` | *(Paste your full MongoDB Atlas string starting with `mongodb://` or `mongodb+srv://`)* |
-| `GEMINI_API_KEY` | *(Optional: Your Google Gemini API Key starting with `AIzaSy...` from Google AI Studio)* |
-| `NODE_ENV` | `production` |
-| `JWT_SECRET` | `my_super_secret_jwt_password_123` *(Any secret string for encrypting login tokens)* |
+| Key | Value | Notes |
+| :--- | :--- | :--- |
+| `SUPABASE_URL` | `https://your-project-id.supabase.co` | From Supabase Project Settings -> API |
+| `SUPABASE_KEY` | *(Your Supabase anon public key or service role key)* | From Supabase Project Settings -> API |
+| `NODE_ENV` | `production` | Enables production optimizations |
+| `JWT_SECRET` | `supersecret_jwt_trip_planner_2026_key` | Secret key for encrypting login tokens |
+| `GEMINI_API_KEY` | *(Optional: Your Google Gemini API Key from Google AI Studio)* | Starts with `AIzaSy...` |
 
 ### Step 5: Click Deploy!
 1. Scroll to the very bottom and click the green **Create Web Service** button.

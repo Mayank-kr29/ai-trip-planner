@@ -1,6 +1,27 @@
-import Trip, { getTripModel } from '../models/Trip.js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import mongoose from 'mongoose';
+import supabase from '../supabaseClient.js';
+
+// Format Supabase Postgres row to match frontend expected fields
+const formatTripResponse = (trip) => {
+  if (!trip) return null;
+  return {
+    _id: trip.id,
+    id: trip.id,
+    userId: trip.user_id,
+    username: trip.username,
+    state: trip.state,
+    city: trip.city,
+    startDate: trip.start_date,
+    endDate: trip.end_date,
+    budget: Number(trip.budget),
+    travelers: Number(trip.travelers),
+    tripType: trip.trip_type,
+    foods: trip.foods || [],
+    hotels: trip.hotels || [],
+    itinerary: trip.itinerary || [],
+    createdAt: trip.created_at
+  };
+};
 
 const getDestinationFoods = (city, state) => {
   const c = (city || '').toLowerCase();
@@ -102,11 +123,7 @@ const generateFallbackItinerary = (city, state, diffDays, budget, travelers, tri
     });
   }
 
-  return {
-    foods,
-    hotels,
-    itinerary
-  };
+  return { foods, hotels, itinerary };
 };
 
 export const generateTripPlan = async (req, res) => {
@@ -131,8 +148,8 @@ Respond STRICTLY in valid JSON format with no markdown formatting or backticks. 
 {
   "foods": ["famous food 1", "famous food 2", "famous food 3", "famous food 4"],
   "hotels": [
-    { "name": "Realistic Hotel Name 1", "price": "₹e.g., 2000/night", "rating": "4.5", "hotelType": "luxury", "link": "https://www.google.com/travel/hotels?q=Hotel+Name+City" },
-    { "name": "Realistic Hotel Name 2", "price": "₹e.g., 1000/night", "rating": "4.0", "hotelType": "standard", "link": "https://www.google.com/travel/hotels?q=Hotel+Name+City" }
+    { "name": "Realistic Hotel Name 1", "price": "₹2000/night", "rating": "4.5", "hotelType": "luxury", "link": "https://www.google.com/travel/hotels?q=Hotel+Name+City" },
+    { "name": "Realistic Hotel Name 2", "price": "₹1000/night", "rating": "4.0", "hotelType": "standard", "link": "https://www.google.com/travel/hotels?q=Hotel+Name+City" }
   ],
   "itinerary": [
     {
@@ -180,8 +197,7 @@ Make sure the itinerary array has exactly ${diffDays} items inside it. Offer rea
       generatedData = generateFallbackItinerary(city, state, diffDays, budget, travelers, tripType);
     }
 
-    const UserTrip = getTripModel(req.username);
-    const newTrip = new UserTrip({
+    const previewTrip = {
       userId: req.userId,
       state: state || 'India',
       city: city || 'City',
@@ -193,114 +209,154 @@ Make sure the itinerary array has exactly ${diffDays} items inside it. Offer rea
       foods: generatedData.foods || [],
       hotels: generatedData.hotels || [],
       itinerary: generatedData.itinerary || []
-    });
+    };
 
-    // Return the generated trip object (not saved until user confirms)
-    res.status(201).json(newTrip);
+    // Return the generated trip object (not saved to Supabase yet until user confirms)
+    res.status(201).json(previewTrip);
 
   } catch (error) {
     console.error('Error generating trip:', error.message);
-    res.status(500).json({ message: 'Server failed to process trip plan', error: error.message });
+    res.status(500).json({ message: 'Server failed to process trip plan: ' + error.message });
   }
 };
 
 export const saveTripPlan = async (req, res) => {
   try {
-    const UserTrip = getTripModel(req.username);
-    // Strip out _id if it exists to avoid MongoDB duplicate key errors
-    const { _id, ...tripData } = req.body;
-    const newTrip = new UserTrip({
-      ...tripData,
-      userId: req.userId
-    });
+    const { _id, id, ...tripData } = req.body;
 
-    if (mongoose.connection.readyState === 1) {
-      const savedTrip = await newTrip.save();
-      res.status(201).json(savedTrip);
-    } else {
-      res.status(500).json({ message: "MongoDB is not connected to save the trip." });
+    const { data: savedTrip, error } = await supabase
+      .from('trips')
+      .insert([{
+        user_id: req.userId,
+        username: req.username,
+        state: tripData.state || '',
+        city: tripData.city || '',
+        start_date: tripData.startDate || '',
+        end_date: tripData.endDate || '',
+        budget: Number(tripData.budget) || 0,
+        travelers: Number(tripData.travelers) || 1,
+        trip_type: tripData.tripType || 'leisure',
+        foods: tripData.foods || [],
+        hotels: tripData.hotels || [],
+        itinerary: tripData.itinerary || []
+      }])
+      .select()
+      .single();
+
+    if (error || !savedTrip) {
+      console.error('Supabase Save Trip Error:', error);
+      return res.status(500).json({ message: 'Failed to save trip to database: ' + (error?.message || '') });
     }
+
+    res.status(201).json(formatTripResponse(savedTrip));
   } catch (error) {
     console.error('Error saving trip:', error.message);
-    res.status(500).json({ message: 'Server error while saving trip', error: error.message });
+    res.status(500).json({ message: 'Server error while saving trip: ' + error.message });
   }
 };
 
 export const updateTripPlan = async (req, res) => {
   try {
-    const UserTrip = getTripModel(req.username);
     const tripId = req.params.id;
-    const { _id, ...tripData } = req.body;
-    
-    if (mongoose.connection.readyState !== 1) {
-      return res.status(500).json({ message: "MongoDB is not connected to update the trip." });
+    const { _id, id, ...tripData } = req.body;
+
+    const updateFields = {};
+    if (tripData.state !== undefined) updateFields.state = tripData.state;
+    if (tripData.city !== undefined) updateFields.city = tripData.city;
+    if (tripData.startDate !== undefined) updateFields.start_date = tripData.startDate;
+    if (tripData.endDate !== undefined) updateFields.end_date = tripData.endDate;
+    if (tripData.budget !== undefined) updateFields.budget = Number(tripData.budget);
+    if (tripData.travelers !== undefined) updateFields.travelers = Number(tripData.travelers);
+    if (tripData.tripType !== undefined) updateFields.trip_type = tripData.tripType;
+    if (tripData.foods !== undefined) updateFields.foods = tripData.foods;
+    if (tripData.hotels !== undefined) updateFields.hotels = tripData.hotels;
+    if (tripData.itinerary !== undefined) updateFields.itinerary = tripData.itinerary;
+
+    const { data: updatedTrip, error } = await supabase
+      .from('trips')
+      .update(updateFields)
+      .eq('id', tripId)
+      .eq('user_id', req.userId)
+      .select()
+      .single();
+
+    if (error || !updatedTrip) {
+      console.error('Supabase Update Trip Error:', error);
+      return res.status(404).json({ message: 'Trip not found or update failed' });
     }
 
-    const updatedTrip = await UserTrip.findOneAndUpdate(
-      { _id: tripId, userId: req.userId },
-      { $set: tripData },
-      { new: true }
-    );
-    
-    if (!updatedTrip) {
-      return res.status(404).json({ message: "Trip not found." });
-    }
-
-    res.status(200).json(updatedTrip);
+    res.status(200).json(formatTripResponse(updatedTrip));
   } catch (error) {
     console.error('Error updating trip:', error.message);
-    res.status(500).json({ message: 'Server error while updating trip', error: error.message });
+    res.status(500).json({ message: 'Server error while updating trip: ' + error.message });
   }
 };
 
 export const deleteTripPlan = async (req, res) => {
   try {
-    const UserTrip = getTripModel(req.username);
     const tripId = req.params.id;
-    
-    if (mongoose.connection.readyState !== 1) {
-      return res.status(500).json({ message: "MongoDB is not connected to delete the trip." });
+
+    const { data, error } = await supabase
+      .from('trips')
+      .delete()
+      .eq('id', tripId)
+      .eq('user_id', req.userId)
+      .select();
+
+    if (error) {
+      console.error('Supabase Delete Trip Error:', error);
+      return res.status(500).json({ message: 'Failed to delete trip from database' });
     }
 
-    const deletedTrip = await UserTrip.findOneAndDelete({ _id: tripId, userId: req.userId });
-    
-    if (!deletedTrip) {
-      return res.status(404).json({ message: "Trip not found." });
+    if (!data || data.length === 0) {
+      return res.status(404).json({ message: 'Trip not found' });
     }
 
-    res.status(200).json({ message: "Trip deleted successfully" });
+    res.status(200).json({ message: 'Trip deleted successfully' });
   } catch (error) {
     console.error('Error deleting trip:', error.message);
-    res.status(500).json({ message: 'Server error while deleting trip', error: error.message });
+    res.status(500).json({ message: 'Server error while deleting trip: ' + error.message });
   }
 };
 
 export const getAllTrips = async (req, res) => {
   try {
-    if (mongoose.connection.readyState !== 1) {
-       return res.status(500).json({ message: "MongoDB is not connected to fetch history." });
+    const { data: trips, error } = await supabase
+      .from('trips')
+      .select('*')
+      .eq('user_id', req.userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase Get All Trips Error:', error);
+      return res.status(500).json({ message: 'Failed to fetch trips from database' });
     }
-    const UserTrip = getTripModel(req.username);
-    const trips = await UserTrip.find({ userId: req.userId }).sort({ createdAt: -1 }); // newest first
-    res.status(200).json(trips);
+
+    res.status(200).json((trips || []).map(formatTripResponse));
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Error fetching trips:', error.message);
+    res.status(500).json({ message: 'Server error: ' + error.message });
   }
 };
 
 export const getTrip = async (req, res) => {
   try {
     const tripId = req.params.id;
-    if (mongoose.connection.readyState !== 1) {
-       return res.status(500).json({ message: "MongoDB is not connected to fetch the trip." });
-    }
-    const UserTrip = getTripModel(req.username);
-    const trip = await UserTrip.findOne({ _id: tripId, userId: req.userId });
-    if (!trip) {
+
+    const { data: trip, error } = await supabase
+      .from('trips')
+      .select('*')
+      .eq('id', tripId)
+      .eq('user_id', req.userId)
+      .maybeSingle();
+
+    if (error || !trip) {
       return res.status(404).json({ message: 'Trip not found' });
     }
-    res.status(200).json(trip);
+
+    res.status(200).json(formatTripResponse(trip));
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Error fetching trip:', error.message);
+    res.status(500).json({ message: 'Server error: ' + error.message });
   }
 };

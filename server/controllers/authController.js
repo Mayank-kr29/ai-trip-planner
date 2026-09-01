@@ -1,6 +1,6 @@
-import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import supabase from '../supabaseClient.js';
 
 export const register = async (req, res) => {
   try {
@@ -10,20 +10,51 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const existingEmail = await User.findOne({ email });
-    if (existingEmail) return res.status(400).json({ message: 'Email is already registered' });
+    // Check if email already registered
+    const { data: existingEmail } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .maybeSingle();
 
-    const existingUsername = await User.findOne({ username });
-    if (existingUsername) return res.status(400).json({ message: 'Username is already taken' });
+    if (existingEmail) {
+      return res.status(400).json({ message: 'Email is already registered' });
+    }
+
+    // Check if username already taken
+    const { data: existingUsername } = await supabase
+      .from('users')
+      .select('id')
+      .eq('username', username.toLowerCase())
+      .maybeSingle();
+
+    if (existingUsername) {
+      return res.status(400).json({ message: 'Username is already taken' });
+    }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = new User({ name, dob, email, phone, username, password: hashedPassword });
-    await user.save();
+    const { data: user, error } = await supabase
+      .from('users')
+      .insert([{
+        name,
+        dob,
+        email: email.toLowerCase(),
+        phone,
+        username: username.toLowerCase(),
+        password: hashedPassword
+      }])
+      .select('id, name, dob, email, phone, username')
+      .single();
+
+    if (error || !user) {
+      console.error('Supabase Registration Error:', error);
+      return res.status(500).json({ message: 'Failed to create user in database: ' + (error?.message || '') });
+    }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email, username: user.username },
+      { id: user.id, email: user.email, username: user.username },
       process.env.JWT_SECRET || 'fallback_secret_key',
       { expiresIn: '7d' }
     );
@@ -32,13 +63,18 @@ export const register = async (req, res) => {
       message: 'Registration successful',
       token,
       user: {
-        id: user._id, name: user.name, email: user.email, username: user.username, phone: user.phone, dob: user.dob
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        username: user.username,
+        phone: user.phone,
+        dob: user.dob
       }
     });
 
   } catch (error) {
     console.error('Error registering:', error);
-    res.status(500).json({ message: 'Server error while registering' });
+    res.status(500).json({ message: 'Server error while registering: ' + error.message });
   }
 };
 
@@ -50,19 +86,23 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: 'Username and password are required' });
     }
 
-    const user = await User.findOne({ username });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username.toLowerCase())
+      .maybeSingle();
 
-    // Since older users might not have a password, we need to handle that gracefully
-    if (!user.password) {
-       return res.status(400).json({ message: 'Please re-register to set a password for this legacy account.' });
+    if (error || !user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email, username: user.username },
+      { id: user.id, email: user.email, username: user.username },
       process.env.JWT_SECRET || 'fallback_secret_key',
       { expiresIn: '7d' }
     );
@@ -71,11 +111,16 @@ export const login = async (req, res) => {
       message: 'Login successful',
       token,
       user: {
-        id: user._id, name: user.name, email: user.email, username: user.username, phone: user.phone, dob: user.dob
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        username: user.username,
+        phone: user.phone,
+        dob: user.dob
       }
     });
   } catch (error) {
     console.error('Error logging in:', error);
-    res.status(500).json({ message: 'Server error while logging in' });
+    res.status(500).json({ message: 'Server error while logging in: ' + error.message });
   }
 };
