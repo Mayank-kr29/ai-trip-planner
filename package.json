@@ -2,12 +2,15 @@
   "name": "trip-planner",
   "version": "1.0.0",
   "scripts": {
+    "postinstall": "cd server && npm install && cd ../client && npm install --include=dev && npm run build",
+    "build": "cd server && npm install && cd ../client && npm install --include=dev && npm run build",
+    "start": "cd server && node server.js",
     "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
-    "build": "npm --prefix server install && npm --prefix client install && npm --prefix client run build",
-    "start": "npm --prefix server start",
     "server": "npm --prefix server run dev",
-    "client": "npm --prefix client run dev",
-    "install-all": "npm --prefix server install && npm --prefix client install"
+    "client": "npm --prefix client run dev"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.4"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
