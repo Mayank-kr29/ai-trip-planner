@@ -1,0 +1,217 @@
+============================================================
+    AI TRIP PLANNER — COMPLETE SETUP & RUN GUIDE
+============================================================
+
+This is a full-stack AI-powered Trip Planner for Indian destinations.
+Follow the steps below to get it running on any machine.
+
+============================================================
+  PRE-REQUIREMENTS (Install these before anything else)
+============================================================
+
+1. Node.js (v18 or above)
+   → Download: https://nodejs.org/en/download
+   → To check if already installed: open terminal → type: node -v
+
+2. npm (comes bundled with Node.js)
+   → To check: npm -v
+
+3. A MongoDB Atlas Account (free tier works fine)
+   → Sign up: https://www.mongodb.com/cloud/atlas
+   → Create a free cluster and get your connection string (MONGODB_URI)
+
+4. A Google Gemini API Key
+   → Get your free key: https://aistudio.google.com/app/apikey
+
+
+============================================================
+  PROJECT FOLDER STRUCTURE
+============================================================
+
+trip-planner/
+├── client/              ← React frontend (Vite)
+├── server/              ← Node.js + Express backend
+│   └── .env             ← Secret keys go here (see step below)
+├── HOW_TO_RUN.txt       ← This file
+└── PROJECT_OVERVIEW.txt ← Technical documentation
+
+
+============================================================
+  STEP 1: CONFIGURE THE BACKEND ENVIRONMENT FILE
+============================================================
+
+Navigate to the "server" folder and open (or create) the file named:
+
+    server/.env
+
+Paste the following content into it and fill in YOUR values:
+
+    PORT=5000
+    MONGODB_URI=<your MongoDB Atlas connection string here>
+    GEMINI_API_KEY=<your Google Gemini API key here>
+    JWT_SECRET=any_random_secret_string_you_choose
+
+NOTES:
+  - Replace <your MongoDB Atlas connection string here> with the full
+    URI from your Atlas cluster. Example format:
+    mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tripplanner?retryWrites=true&w=majority
+  - Replace <your Google Gemini API key here> with the key from Google AI Studio.
+  - JWT_SECRET can be any long random string (e.g., "mySecretKey123!").
+  - NEVER share this .env file publicly or commit it to GitHub.
+
+
+============================================================
+  STEP 2: INSTALL BACKEND DEPENDENCIES
+============================================================
+
+Open a terminal and run the following commands:
+
+    cd trip-planner/server
+    npm install
+
+This installs all backend packages including:
+  - express, mongoose, jsonwebtoken, bcryptjs,
+    @google/generative-ai, nodemailer, dotenv, cors, nodemon
+
+
+============================================================
+  STEP 3: INSTALL FRONTEND DEPENDENCIES
+============================================================
+
+Open a SECOND terminal tab/window and run:
+
+    cd trip-planner/client
+    npm install
+
+This installs all frontend packages including:
+  - react, react-router-dom, axios, lucide-react, vite
+
+
+============================================================
+  STEP 4: RUN THE APPLICATION
+============================================================
+
+You need TWO terminal windows open simultaneously.
+
+--- Terminal 1 (Backend Server) ---
+    cd trip-planner/server
+    npm run dev
+
+  → The server will start at: http://localhost:5000
+  → You should see: "MongoDB Connected" and "Server running on port 5000"
+
+--- Terminal 2 (Frontend App) ---
+    cd trip-planner/client
+    npm run dev
+
+  → The app will open at: http://localhost:5173
+  → Open this URL in your browser to use the application.
+
+
+============================================================
+  HOW TO USE THE APP
+============================================================
+
+1. SIGN UP
+   → Go to http://localhost:5173
+   → You will be redirected to the Login page.
+   → Click "Sign Up" to create a new account.
+   → Fill in: Username, Full Name, Date of Birth, Phone, Email, Password.
+   → Click "Sign Up" to register.
+
+2. LOGIN
+   → Enter your Username and Password.
+   → Click "Login" to access the app.
+
+3. PLAN A TRIP
+   → Click "Plan Trip" in the navigation bar.
+   → Select a State and City in India.
+   → Choose your travel dates (start and end).
+   → Set your budget (in ₹) and number of travelers.
+   → Select a trip style (Leisure, Adventure, Cultural, etc.).
+   → Click "Plan My Trip" — the AI will generate your itinerary!
+
+4. SAVE YOUR TRIP
+   → After the AI generates your trip plan, you can review it.
+   → If you like it, click "Save Itinerary" to save it to your account.
+
+5. VIEW HISTORY
+   → Click "History" in the navigation bar.
+   → All your saved trips are listed here.
+   → You can click a trip to view it, "Edit" to modify it,
+     or "Delete" to remove it permanently.
+
+6. LOGOUT
+   → Click your profile icon or "Logout" in the Navbar.
+
+
+============================================================
+  IMPORTANT NOTES
+============================================================
+
+- Each user has their own completely separate data in MongoDB.
+  Your trips are NEVER visible to other users.
+
+- Passwords are securely hashed using bcrypt before being stored.
+  Nobody (including the developer) can see your plain-text password.
+
+- Trip generation requires a valid GEMINI_API_KEY.
+  If the key is missing or invalid, trip generation will fail.
+
+- The app only allows future travel dates. You cannot select past dates
+  in the trip planning form.
+
+- If you see a "MongoDB not connected" error, double-check your
+  MONGODB_URI in the server/.env file and ensure your Atlas cluster
+  IP whitelist allows your current IP address.
+  (In Atlas: Security → Network Access → Add IP Address → Allow from Anywhere)
+
+
+============================================================
+  TECH STACK SUMMARY
+============================================================
+
+Frontend  : React 18 (Vite) + React Router + Axios + Lucide Icons
+Backend   : Node.js + Express.js
+Database  : MongoDB Atlas (Mongoose ODM)
+Auth      : JWT (JSON Web Tokens) + bcryptjs password hashing
+AI        : Google Gemini API (@google/generative-ai)
+Styling   : Pure CSS (Glassmorphism design system)
+
+
+============================================================
+  TROUBLESHOOTING
+============================================================
+
+Problem: "npm install" fails
+→ Make sure Node.js v18+ is installed. Run: node -v
+
+Problem: Server won't start
+→ Check that server/.env exists and has all 3 variables filled in.
+
+Problem: "Failed to generate AI trip"
+→ Your GEMINI_API_KEY in server/.env is missing or wrong.
+→ Get a new key at: https://aistudio.google.com/app/apikey
+
+Problem: Login says "Invalid credentials"
+→ Make sure you are using the correct username (not email) and password.
+→ If you registered before the password system was added, re-register.
+
+Problem: History page shows an error
+→ Check that the backend server is running in Terminal 1.
+→ Also verify your MongoDB Atlas cluster is active and IP is whitelisted.
+
+Problem: Port already in use
+→ Backend: change PORT=5000 to PORT=5001 in server/.env
+→ Frontend: Vite auto-picks the next available port.
+
+
+============================================================
+  CONTACT / DEVELOPER
+============================================================
+
+Built as a full-stack student project.
+For any issues, review PROJECT_OVERVIEW.txt for in-depth
+technical documentation about the codebase.
+
+============================================================

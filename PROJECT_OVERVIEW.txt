@@ -1,0 +1,37 @@
+# AI Trip Planner - Project Overview
+
+## Project Architecture
+This is a full-stack MERN application (MongoDB, Express, React, Node.js) with AI integration for generating trip itineraries.
+- **Frontend**: Built with React (Vite), React Router for navigation, and pure CSS for styling (glassmorphism UI). Icons provided by `lucide-react`.
+- **Backend**: Built with Node.js and Express. Uses MongoDB (Atlas) via Mongoose for data persistence. Uses `@google/generative-ai` (Gemini API) to generate detailed, day-by-day travel itineraries based on user inputs.
+
+## Directory Structure
+- `/client`: React frontend application
+  - `src/pages`: `Home.jsx` (Landing), `PlanTrip.jsx` (Form input), `Results.jsx` (Displays generated trip), `History.jsx` (Saved trips), `Auth.jsx` (Login/Registration).
+  - `src/components`: `Navbar.jsx` (Navigation), `Footer.jsx` (Developer Modal).
+  - `src/services`: `api.js` (Axios configuration for backend communication).
+- `/server`: Node.js/Express backend application
+  - `controllers`: `authController.js` (User management/JWT), `tripController.js` (Gemini AI integration & trip saving/fetching).
+  - `models`: `User.js` (User Schema), `Trip.js` (Trip Schema).
+  - `routes`: `authRoutes.js`, `tripRoutes.js`.
+
+## Features Implemented
+1. **User Authentication (JWT & bcrypt)**: Separated Login and Sign-Up flows. Users register an account using username, full name, dob, phone, email, and password. Passwords are securely hashed with `bcryptjs`. The Login flow requires only username and password. JWT tokens are stored in `localStorage` upon successful authentication.
+2. **AI Trip Generation**: Users select a state and city in India, travel dates, budget, travelers, and trip style. The backend sends a carefully crafted prompt to the Google Gemini API to return a structured JSON response with an itinerary, hotels, and local food.
+3. **Trip Persistence**: Generated trips are saved to MongoDB Atlas, and users can revisit them on the "History" page.
+4. **Responsive Glassmorphism UI**: Beautiful, modern styling in `index.css` with dynamic animations. 
+5. **Dynamic Location Selectors**: Form dropdowns dynamically populate cities based on the selected Indian state.
+6. **Recent Fixes**:
+   - Enforced user login: The entire application (Home, Plan Trip, History) is now wrapped in a `ProtectedRoute` component. Users are immediately redirected to the Auth page if they are not logged in.
+   - Date validation in "Plan Trip" form: Added `min` attributes to prevent users from selecting past dates. The end date dynamically requires a date on or after the selected start date.
+   - True Data Isolation in Atlas: The backend now dynamically generates a completely separate MongoDB collection for each individual user based on their username (e.g., `trips_johndoe`). Whatever a user searches or saves reflects only in their dedicated collection, fulfilling the requirement for separate, uncombined data storage.
+   - Explicit trip saving: When generating an AI trip, it is no longer automatically saved to the database. It is only saved when the user explicitly clicks the "Save Itinerary" button on the Results page. Additionally, the save button is hidden when viewing past trips from the History page.
+   - History Management (Edit/Delete): Added "Edit" and "Delete" buttons to every trip in the History section. Clicking "Edit" reloads the Plan Trip form with the original parameters pre-filled, allowing the user to generate a new itinerary and update their existing saved trip.
+   - Fixed MongoDB Atlas connection string parsing (removed strict `.includes('cluster')` constraint to support 'Cluster0').
+   - Fixed CSS flexbox alignment in the Navbar so that links ("Home", "Plan Trip", "History") no longer overlap with the Logo.
+
+## Running the Application
+- Open two terminals.
+- **Terminal 1**: `cd server && npm run dev` (Runs on `http://localhost:5000`)
+- **Terminal 2**: `cd client && npm run dev` (Runs on `http://localhost:5173`)
+- **Requirements**: Ensure `.env` in the server folder has `PORT=5000`, a valid `MONGODB_URI`, and a valid `GEMINI_API_KEY`.
