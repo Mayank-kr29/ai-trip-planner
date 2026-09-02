@@ -9,7 +9,7 @@ const Navbar = () => {
       <div className="nav-container">
         <Link to="/" className="logo">
           <Plane className="logo-icon" size={28} />
-          AI Trip Planner
+          Trip Planner
         </Link>
         <ul className="nav-links">
           <li>
@@ -36,7 +36,7 @@ const Navbar = () => {
                   }
                 })()}
               </span>
-              <button 
+              <button
                 onClick={() => {
                   localStorage.removeItem('token');
                   localStorage.removeItem('user');
