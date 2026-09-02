@@ -46,18 +46,18 @@ const History = () => {
   return (
     <div className="container" style={{ padding: '40px 20px', marginTop: '60px' }}>
       <div className="animate-fade-in-up">
-        <h1 style={{ fontSize: '3rem', marginBottom: '20px', textAlign: 'center' }}>
-          Your Trip <span style={{ color: 'var(--primary)' }}>History</span>
+        <h1 style={{ fontSize: '3rem', marginBottom: '20px', textAlign: 'center', color: 'var(--text-pure)' }}>
+          Your Trip <span style={{ background: 'var(--gradient-text)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>History</span>
         </h1>
-        <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '50px' }}>
+        <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '50px', fontSize: '1.1rem' }}>
           Revisit all the incredible journeys you’ve planned with us!
         </p>
 
-        {loading && <div style={{ textAlign: 'center' }}>Loading your history...</div>}
-        {error && <div style={{ textAlign: 'center', color: 'var(--accent)' }}>{error}</div>}
+        {loading && <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Loading your history...</div>}
+        {error && <div style={{ textAlign: 'center', color: 'var(--text-offwhite)' }}>{error}</div>}
 
         {!loading && !error && trips.length === 0 && (
-          <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+          <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '1.1rem' }}>
             You haven't saved any trips yet!
           </div>
         )}
@@ -67,35 +67,45 @@ const History = () => {
             <div 
               key={trip._id} 
               className="glass-panel" 
-              style={{ padding: '25px', cursor: 'pointer', transition: 'transform 0.3s' }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'} 
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
+              style={{ padding: '25px', cursor: 'pointer', transition: 'transform 0.3s, border-color 0.3s' }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.borderColor = 'var(--glass-border-hover)'; }} 
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'var(--glass-border)'; }}
               onClick={() => handleTripClick(trip)}
             >
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '15px', color: 'var(--text-light)' }}>
-                <Map size={20} style={{ marginRight: '8px', verticalAlign: 'text-bottom', color: 'var(--primary)' }} />
+              <h3 style={{ fontSize: '1.4rem', marginBottom: '15px', color: 'var(--text-pure)' }}>
+                <Map size={20} style={{ marginRight: '8px', verticalAlign: 'text-bottom', color: 'var(--accent-gold)' }} />
                 {trip.city}, {trip.state}
               </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', color: 'var(--text-muted)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Calendar size={18} />
+                  <Calendar size={18} color="var(--accent-gold)" />
                   <span>{new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Clock size={18} />
+                  <Clock size={18} color="var(--accent-gold)" />
                   <span>{trip.travelers} Travelers</span>
                 </div>
               </div>
 
-              <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 600, color: 'var(--text-light)' }}>Budget: ₹{trip.budget}</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={(e) => { e.stopPropagation(); handleEditTrip(trip); }} style={{ background: 'rgba(255, 193, 7, 0.2)', color: 'var(--warning)', padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                    <Edit2 size={14} /> Edit
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleEditTrip(trip); }} 
+                    style={{ background: 'rgba(212, 175, 55, 0.12)', color: 'var(--badge-text)', padding: '6px 14px', borderRadius: '20px', border: '1px solid rgba(212, 175, 55, 0.3)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem', fontWeight: '600', transition: 'all 0.2s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(212, 175, 55, 0.25)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(212, 175, 55, 0.12)'}
+                  >
+                    <Edit2 size={13} /> Edit
                   </button>
-                  <button onClick={(e) => { e.stopPropagation(); handleDeleteTrip(trip._id); }} style={{ background: 'rgba(255, 82, 82, 0.2)', color: '#FF5252', padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                    <Trash2 size={14} /> Delete
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleDeleteTrip(trip._id); }} 
+                    style={{ background: 'rgba(223, 230, 233, 0.05)', color: 'var(--text-dim)', padding: '6px 14px', borderRadius: '20px', border: '1px solid var(--border-subtle)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem', fontWeight: '600', transition: 'all 0.2s' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 118, 117, 0.12)'; e.currentTarget.style.color = '#ff7675'; e.currentTarget.style.borderColor = 'rgba(255, 118, 117, 0.3)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(223, 230, 233, 0.05)'; e.currentTarget.style.color = 'var(--text-dim)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+                  >
+                    <Trash2 size={13} /> Delete
                   </button>
                 </div>
               </div>

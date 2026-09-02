@@ -25,8 +25,8 @@ const Navbar = () => {
         <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
           {localStorage.getItem('token') ? (
             <>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--success)' }}></span>
+              <span style={{ color: 'var(--text-light)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(223, 230, 233, 0.06)', padding: '6px 14px', borderRadius: '20px', border: '1px solid var(--border-subtle)' }}>
+                <span style={{ display: 'inline-block', width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--accent-gold)', boxShadow: '0 0 8px var(--accent-gold-glow)' }}></span>
                 {(() => {
                   try {
                     const u = JSON.parse(localStorage.getItem('user'));

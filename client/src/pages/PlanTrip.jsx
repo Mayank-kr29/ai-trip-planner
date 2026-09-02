@@ -78,15 +78,15 @@ const PlanTrip = () => {
   return (
     <div className="container" style={{ padding: '40px 20px', maxWidth: '800px' }}>
       <div className="glass-panel animate-fade-in-up" style={{ padding: '40px' }}>
-        <h2 style={{ marginBottom: '10px', fontSize: '2rem' }}>Tell us your dream</h2>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '30px' }}>Our AI will craft the perfect itinerary just for you.</p>
+        <h2 style={{ marginBottom: '10px', fontSize: '2.2rem', background: 'var(--gradient-text)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Tell us your dream</h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '30px', fontSize: '1.05rem' }}>Our AI will craft the perfect itinerary just for you.</p>
 
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label className="input-label">Select State (India)</label>
               <div style={{ position: 'relative' }}>
-                <MapPin style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-muted)' }} size={20} />
+                <MapPin style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--accent-gold)' }} size={20} />
                 <select 
                   name="state"
                   className="input-field" 
@@ -106,7 +106,7 @@ const PlanTrip = () => {
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label className="input-label">Select City</label>
               <div style={{ position: 'relative' }}>
-                <MapPin style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-muted)' }} size={20} />
+                <MapPin style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--accent-gold)' }} size={20} />
                 <select 
                   name="city"
                   className="input-field" 
@@ -128,14 +128,14 @@ const PlanTrip = () => {
             <div className="input-group">
               <label className="input-label">Start Date</label>
               <div style={{ position: 'relative' }}>
-                <Calendar style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-muted)' }} size={20} />
+                <Calendar style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--accent-gold)' }} size={20} />
                 <input type="date" name="startDate" className="input-field" style={{ width: '100%', paddingLeft: '45px' }} required onChange={handleChange} min={new Date().toISOString().split('T')[0]} />
               </div>
             </div>
             <div className="input-group">
               <label className="input-label">End Date</label>
               <div style={{ position: 'relative' }}>
-                <Calendar style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-muted)' }} size={20} />
+                <Calendar style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--accent-gold)' }} size={20} />
                 <input type="date" name="endDate" className="input-field" style={{ width: '100%', paddingLeft: '45px' }} required onChange={handleChange} min={formData.startDate || new Date().toISOString().split('T')[0]} />
               </div>
             </div>
@@ -145,7 +145,7 @@ const PlanTrip = () => {
             <div className="input-group">
               <label className="input-label">Total Trip Budget (₹)</label>
               <div style={{ position: 'relative' }}>
-                <DollarSign style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-muted)' }} size={20} />
+                <DollarSign style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--accent-gold)' }} size={20} />
                 <input 
                   type="number" 
                   name="budget" 
@@ -162,7 +162,7 @@ const PlanTrip = () => {
             <div className="input-group">
               <label className="input-label">Number of Travelers</label>
               <div style={{ position: 'relative' }}>
-                <Users style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-muted)' }} size={20} />
+                <Users style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--accent-gold)' }} size={20} />
                 <input type="number" name="travelers" min="1" max="20" className="input-field" style={{ width: '100%', paddingLeft: '45px' }} value={formData.travelers} onChange={handleChange} />
               </div>
             </div>
@@ -171,7 +171,7 @@ const PlanTrip = () => {
           <div className="input-group">
             <label className="input-label">Trip Style</label>
             <div style={{ position: 'relative' }}>
-              <Target style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-muted)' }} size={20} />
+              <Target style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--accent-gold)' }} size={20} />
               <select name="tripType" className="input-field" style={{ width: '100%', paddingLeft: '45px', appearance: 'none' }} value={formData.tripType} onChange={handleChange}>
                 <option value="leisure">Leisure & Relax</option>
                 <option value="adventure">Action & Adventure</option>

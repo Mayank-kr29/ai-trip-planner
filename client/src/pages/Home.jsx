@@ -50,7 +50,7 @@ const Home = () => {
   return (
     <div className="container" style={{ padding: '40px 20px', textAlign: 'center', marginTop: '60px' }}>
       <div className="animate-fade-in-up">
-        <h1 style={{ fontSize: '3.5rem', marginBottom: '20px', background: 'linear-gradient(to right, var(--primary), var(--text-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <h1 style={{ fontSize: '3.5rem', marginBottom: '20px', background: 'linear-gradient(135deg, #ffffff 0%, #dfe6e9 50%, var(--accent-gold) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           Your Dream Journey, <br />Planned in Seconds
         </h1>
         <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', maxWidth: '600px', margin: '0 auto 40px' }}>
@@ -64,47 +64,47 @@ const Home = () => {
       </div>
 
       <div style={{ marginTop: '100px', textAlign: 'left', animation: 'fadeInUp 1s ease-out', paddingBottom: '60px' }}>
-        <h2 style={{ fontSize: '2.5rem', marginBottom: '40px', background: 'linear-gradient(to right, #ffffff, #A0A0B0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textAlign: 'center' }}>
+        <h2 style={{ fontSize: '2.5rem', marginBottom: '40px', background: 'var(--gradient-text)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textAlign: 'center' }}>
           Explore Popular Tours
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
           
-          <Link to="/results" state={{ plan: goaTrip }} className="glass-panel" style={{ overflow: 'hidden', transition: 'transform 0.3s', display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', padding: '0' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
+          <Link to="/results" state={{ plan: goaTrip }} className="glass-panel" style={{ overflow: 'hidden', transition: 'transform 0.3s, border-color 0.3s', display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', padding: '0' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-10px)'; e.currentTarget.style.borderColor = 'var(--glass-border-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'var(--glass-border)'; }}>
             <div style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
-              <img src="/images/goa.png" alt="Goa Beach Getaway" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
+              <img src="/images/goa.png" alt="Goa Beach Getaway" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
             </div>
             <div style={{ padding: '25px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <h3 style={{ fontSize: '1.4rem' }}>Goa Beach Getaway</h3>
-                <span style={{ background: 'rgba(238, 108, 41, 0.2)', color: 'var(--primary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>4 Days</span>
+                <h3 style={{ fontSize: '1.35rem', color: 'var(--text-pure)' }}>Goa Beach Getaway</h3>
+                <span className="badge-pill">4 Days</span>
               </div>
-              <p style={{ color: 'var(--text-muted)' }}>Relax on pristine golden beaches, explore vibrant nightlife, and experience the coastal charm.</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Relax on pristine golden beaches, explore vibrant nightlife, and experience the coastal charm.</p>
             </div>
           </Link>
 
-          <Link to="/results" state={{ plan: jaipurTrip }} className="glass-panel" style={{ overflow: 'hidden', transition: 'transform 0.3s', display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', padding: '0' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
+          <Link to="/results" state={{ plan: jaipurTrip }} className="glass-panel" style={{ overflow: 'hidden', transition: 'transform 0.3s, border-color 0.3s', display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', padding: '0' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-10px)'; e.currentTarget.style.borderColor = 'var(--glass-border-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'var(--glass-border)'; }}>
             <div style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
-              <img src="/images/jaipur.png" alt="Royal Jaipur Tour" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
+              <img src="/images/jaipur.png" alt="Royal Jaipur Tour" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
             </div>
             <div style={{ padding: '25px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <h3 style={{ fontSize: '1.4rem' }}>Royal Jaipur Tour</h3>
-                <span style={{ background: 'rgba(122, 166, 179, 0.2)', color: 'var(--accent)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>3 Days</span>
+                <h3 style={{ fontSize: '1.35rem', color: 'var(--text-pure)' }}>Royal Jaipur Tour</h3>
+                <span className="badge-pill">3 Days</span>
               </div>
-              <p style={{ color: 'var(--text-muted)' }}>Discover the majesty of the Pink City, grand palaces, rich culture, and stunning sunsets.</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Discover the majesty of the Pink City, grand palaces, rich culture, and stunning sunsets.</p>
             </div>
           </Link>
 
-          <Link to="/results" state={{ plan: keralaTrip }} className="glass-panel" style={{ overflow: 'hidden', transition: 'transform 0.3s', display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', padding: '0' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
+          <Link to="/results" state={{ plan: keralaTrip }} className="glass-panel" style={{ overflow: 'hidden', transition: 'transform 0.3s, border-color 0.3s', display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', padding: '0' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-10px)'; e.currentTarget.style.borderColor = 'var(--glass-border-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'var(--glass-border)'; }}>
             <div style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
-              <img src="/images/kerala.png" alt="Kerala Backwaters Retreat" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
+              <img src="/images/kerala.png" alt="Kerala Backwaters Retreat" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
             </div>
             <div style={{ padding: '25px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <h3 style={{ fontSize: '1.4rem' }}>Kerala Backwaters</h3>
-                <span style={{ background: 'rgba(76, 175, 80, 0.2)', color: 'var(--success)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>5 Days</span>
+                <h3 style={{ fontSize: '1.35rem', color: 'var(--text-pure)' }}>Kerala Backwaters</h3>
+                <span className="badge-pill">5 Days</span>
               </div>
-              <p style={{ color: 'var(--text-muted)' }}>Sail through tranquil backwaters on a traditional houseboat amidst lush greenery.</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Sail through tranquil backwaters on a traditional houseboat amidst lush greenery.</p>
             </div>
           </Link>
 

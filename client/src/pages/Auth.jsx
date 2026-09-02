@@ -67,7 +67,7 @@ const Auth = () => {
       <div className="glass-panel animate-fade-in-up" style={{ width: '100%', maxWidth: '500px', padding: '40px', borderRadius: '24px' }}>
         
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <h2 style={{ fontSize: '2rem', marginBottom: '10px', color: 'white' }}>
+          <h2 style={{ fontSize: '2.1rem', marginBottom: '10px', color: 'var(--text-pure)' }}>
             {isLogin ? 'Welcome Back' : 'Create Account'}
           </h2>
           <p style={{ color: 'var(--text-muted)' }}>
@@ -76,7 +76,7 @@ const Auth = () => {
         </div>
 
         {error && (
-          <div style={{ backgroundColor: 'rgba(255, 82, 82, 0.1)', border: '1px solid #FF5252', padding: '12px', borderRadius: '8px', color: '#FF5252', marginBottom: '20px', fontSize: '0.9rem' }}>
+          <div style={{ backgroundColor: 'rgba(255, 118, 117, 0.12)', border: '1px solid rgba(255, 118, 117, 0.35)', padding: '12px 16px', borderRadius: '10px', color: '#ff7675', marginBottom: '20px', fontSize: '0.9rem' }}>
             {error}
           </div>
         )}
@@ -85,7 +85,7 @@ const Auth = () => {
           <div className="input-group">
             <label className="input-label">Username</label>
             <div style={{ position: 'relative' }}>
-              <User size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <User size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-gold)' }} />
               <input 
                 type="text" 
                 name="username"
@@ -104,7 +104,7 @@ const Auth = () => {
               <div className="input-group">
                 <label className="input-label">Full Name</label>
                 <div style={{ position: 'relative' }}>
-                  <User size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <User size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-gold)' }} />
                   <input 
                     type="text" 
                     name="name"
@@ -121,7 +121,7 @@ const Auth = () => {
               <div className="input-group">
                 <label className="input-label">Date of Birth</label>
                 <div style={{ position: 'relative' }}>
-                  <Calendar size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <Calendar size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-gold)' }} />
                   <input 
                     type="date" 
                     name="dob"
@@ -137,7 +137,7 @@ const Auth = () => {
               <div className="input-group">
                 <label className="input-label">Phone Number</label>
                 <div style={{ position: 'relative' }}>
-                  <Phone size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <Phone size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-gold)' }} />
                   <input 
                     type="tel" 
                     name="phone"
@@ -154,7 +154,7 @@ const Auth = () => {
               <div className="input-group">
                 <label className="input-label">Email Address</label>
                 <div style={{ position: 'relative' }}>
-                  <Mail size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <Mail size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-gold)' }} />
                   <input 
                     type="email" 
                     name="email"
@@ -173,7 +173,7 @@ const Auth = () => {
           <div className="input-group">
             <label className="input-label">Password</label>
             <div style={{ position: 'relative' }}>
-              <Lock size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <Lock size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-gold)' }} />
               <input 
                 type={showPassword ? 'text' : 'password'} 
                 name="password"
@@ -204,7 +204,7 @@ const Auth = () => {
             {isLogin ? "Don't have an account?" : "Already have an account?"}
             <button 
               onClick={toggleMode} 
-              style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', marginLeft: '5px', cursor: 'pointer' }}
+              style={{ background: 'none', border: 'none', color: 'var(--accent-gold)', fontWeight: '700', textDecoration: 'underline', marginLeft: '6px', cursor: 'pointer' }}
             >
               {isLogin ? 'Sign Up' : 'Login'}
             </button>
