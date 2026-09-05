@@ -6,10 +6,7 @@ const Footer = () => {
 
   // You can easily edit these names and roles!
   const developers = [
-    { name: "Mayank", UID: "24BCS11383", role: "Full Stack Developer" },
-    { name: "Kartik Mishra", UID: "24BCS10067", role: "Frontend Engineer" },
-    { name: "Ansh Goyal", UID: "24BCS10135", role: "Frontend Engineer" },
-    { name: "Monika Kartiyar", UID: "24BCS11405", role: "Backend Engineer" }
+    { name: "Mayank" }
   ];
 
   return (
@@ -69,11 +66,11 @@ const Footer = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
               {developers.map((dev, i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: '0.4fr 2fr 2fr 2fr', gap: '15px', alignItems: 'center', background: 'rgba(223, 230, 233, 0.04)', padding: '14px 15px', borderRadius: '10px', border: '1px solid var(--border-subtle)', fontWeight: '500' }}>
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: dev.UID || dev.role ? '0.4fr 2fr 2fr 2fr' : '0.4fr 1fr', gap: '15px', alignItems: 'center', background: 'rgba(223, 230, 233, 0.04)', padding: '14px 15px', borderRadius: '10px', border: '1px solid var(--border-subtle)', fontWeight: '500' }}>
                   <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{i + 1}</span>
                   <strong style={{ color: 'var(--text-pure)', fontSize: '1.05rem', fontWeight: '700' }}>{dev.name}</strong>
-                  <span style={{ color: 'var(--text-light)', fontSize: '0.92rem' }}>{dev.UID}</span>
-                  <span style={{ color: 'var(--badge-text)', fontSize: '0.88rem', background: 'var(--badge-bg)', padding: '4px 12px', borderRadius: '20px', width: 'fit-content', border: '1px solid var(--badge-border)', fontWeight: '600' }}>{dev.role}</span>
+                  {dev.UID && <span style={{ color: 'var(--text-light)', fontSize: '0.92rem' }}>{dev.UID}</span>}
+                  {dev.role && <span style={{ color: 'var(--badge-text)', fontSize: '0.88rem', background: 'var(--badge-bg)', padding: '4px 12px', borderRadius: '20px', width: 'fit-content', border: '1px solid var(--badge-border)', fontWeight: '600' }}>{dev.role}</span>}
                 </div>
               ))}
             </div>
