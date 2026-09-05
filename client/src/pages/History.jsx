@@ -73,17 +73,17 @@ const History = () => {
               onClick={() => handleTripClick(trip)}
             >
               <h3 style={{ fontSize: '1.4rem', marginBottom: '15px', color: 'var(--text-pure)' }}>
-                <Map size={20} style={{ marginRight: '8px', verticalAlign: 'text-bottom', color: 'var(--accent-gold)' }} />
+                <Map size={20} style={{ marginRight: '8px', verticalAlign: 'text-bottom', color: 'var(--text-pure)' }} />
                 {trip.city}, {trip.state}
               </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', color: 'var(--text-muted)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Calendar size={18} color="var(--accent-gold)" />
+                  <Calendar size={18} color="var(--text-light)" />
                   <span>{new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Clock size={18} color="var(--accent-gold)" />
+                  <Clock size={18} color="var(--text-light)" />
                   <span>{trip.travelers} Travelers</span>
                 </div>
               </div>
@@ -93,17 +93,17 @@ const History = () => {
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleEditTrip(trip); }} 
-                    style={{ background: 'rgba(212, 175, 55, 0.12)', color: 'var(--badge-text)', padding: '6px 14px', borderRadius: '20px', border: '1px solid rgba(212, 175, 55, 0.3)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem', fontWeight: '600', transition: 'all 0.2s' }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(212, 175, 55, 0.25)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(212, 175, 55, 0.12)'}
+                    style={{ background: 'var(--pill-bg)', color: 'var(--text-pure)', padding: '6px 14px', borderRadius: '20px', border: '1px solid var(--border-subtle)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem', fontWeight: '600', transition: 'all 0.2s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-card-hover)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'var(--pill-bg)'}
                   >
                     <Edit2 size={13} /> Edit
                   </button>
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleDeleteTrip(trip._id); }} 
-                    style={{ background: 'rgba(223, 230, 233, 0.05)', color: 'var(--text-dim)', padding: '6px 14px', borderRadius: '20px', border: '1px solid var(--border-subtle)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem', fontWeight: '600', transition: 'all 0.2s' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 118, 117, 0.12)'; e.currentTarget.style.color = '#ff7675'; e.currentTarget.style.borderColor = 'rgba(255, 118, 117, 0.3)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(223, 230, 233, 0.05)'; e.currentTarget.style.color = 'var(--text-dim)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+                    style={{ background: 'var(--pill-bg)', color: 'var(--text-dim)', padding: '6px 14px', borderRadius: '20px', border: '1px solid var(--border-subtle)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem', fontWeight: '600', transition: 'all 0.2s' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.12)'; e.currentTarget.style.color = '#EF4444'; e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--pill-bg)'; e.currentTarget.style.color = 'var(--text-dim)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
                   >
                     <Trash2 size={13} /> Delete
                   </button>

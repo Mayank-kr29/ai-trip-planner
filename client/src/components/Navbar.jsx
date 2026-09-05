@@ -1,8 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Plane, Compass, Map } from 'lucide-react';
+import { Plane, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 const Navbar = () => {
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <nav className="navbar">
@@ -22,11 +24,23 @@ const Navbar = () => {
             <Link to="/history" className={`nav-link ${location.pathname === '/history' ? 'active' : ''}`}>History</Link>
           </li>
         </ul>
-        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button
+            onClick={toggleTheme}
+            className="theme-toggle-btn"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? (
+              <Sun size={18} />
+            ) : (
+              <Moon size={18} />
+            )}
+          </button>
           {localStorage.getItem('token') ? (
             <>
-              <span style={{ color: 'var(--text-light)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(223, 230, 233, 0.06)', padding: '6px 14px', borderRadius: '20px', border: '1px solid var(--border-subtle)' }}>
-                <span style={{ display: 'inline-block', width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--accent-gold)', boxShadow: '0 0 8px var(--accent-gold-glow)' }}></span>
+              <span style={{ color: 'var(--text-light)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--pill-bg)', padding: '6px 14px', borderRadius: '20px', border: '1px solid var(--border-subtle)' }}>
+                <span style={{ display: 'inline-block', width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--primary)' }}></span>
                 {(() => {
                   try {
                     const u = JSON.parse(localStorage.getItem('user'));

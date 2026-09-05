@@ -18,7 +18,7 @@ const Footer = () => {
       padding: '25px 20px',
       marginTop: 'auto',
       borderTop: '1px solid var(--border-subtle)',
-      background: 'rgba(45, 52, 54, 0.95)',
+      background: 'var(--bg-surface)',
       color: 'var(--text-muted)',
       position: 'relative'
     }}>
@@ -28,7 +28,7 @@ const Footer = () => {
           onClick={() => setShowDevs(true)}
           style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 26px' }}
         >
-          <Users size={18} color="var(--accent-gold)" />
+          <Users size={18} color="var(--primary)" />
           Developers
         </button>
       </div>
@@ -37,7 +37,7 @@ const Footer = () => {
         <div style={{
           position: 'fixed',
           top: 0, left: 0, width: '100%', height: '100%',
-          background: 'rgba(34, 40, 41, 0.88)',
+          background: 'rgba(0, 0, 0, 0.65)',
           backdropFilter: 'blur(10px)',
           WebkitBackdropFilter: 'blur(10px)',
           display: 'flex',

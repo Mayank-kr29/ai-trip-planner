@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import supabase from '../supabaseClient.js';
+import { getCuratedItinerary } from '../data/destinationPlaces.js';
 
 // Format Supabase Postgres row to match frontend expected fields
 const formatTripResponse = (trip) => {
@@ -81,47 +82,8 @@ const generateFallbackItinerary = (city, state, diffDays, budget, travelers, tri
     }
   ];
 
-  const dayThemes = [
-    { title: "Arrival, Check-in & Scenic Welcome", activityType: "Orientation" },
-    { title: "Iconic Landmarks & Historical Exploration", activityType: "Heritage" },
-    { title: "Cultural Immersion & Vibrant Bazaars", activityType: "Culture" },
-    { title: "Nature Trails & Panoramic Sunset Views", activityType: "Nature" },
-    { title: "Gastronomy, Street Food & Art Exploration", activityType: "Culinary" },
-    { title: "Hidden Gems & Leisure Excursion", activityType: "Exploration" },
-    { title: "Adventure & Thrilling Outdoor Activities", activityType: "Adventure" },
-    { title: "Relaxation & Riverside / Lake Promenade", activityType: "Relaxation" },
-    { title: "Local Craft Villages & Artisan Workshops", activityType: "Craft" },
-    { title: "Sacred Shrines & Architectural Wonders", activityType: "Architecture" },
-    { title: "Scenic Countryside Day Excursion", activityType: "Getaway" },
-    { title: "Photography Walk & Twilight Viewpoints", activityType: "Sightseeing" },
-    { title: "Souvenir Shopping & Farewell Feast", activityType: "Shopping" },
-    { title: "Last-Minute Exploring & Joyful Departure", activityType: "Departure" }
-  ];
-
-  const itinerary = [];
-  for (let i = 0; i < numDays; i++) {
-    const dayNum = i + 1;
-    const theme = dayThemes[i % dayThemes.length];
-    const dayEstExpense = Math.round(dailyBudget * 0.8);
-
-    itinerary.push({
-      day: dayNum,
-      title: theme.title,
-      expense: `₹${dayEstExpense}`,
-      morning: {
-        activity: `Morning ${theme.activityType} in ${city}`,
-        description: `Begin your morning with breakfast featuring local favorites, followed by exploring premier sights in ${city}.`
-      },
-      afternoon: {
-        activity: `Afternoon ${tripType} Highlights in ${city}`,
-        description: `Delve into the vibrant atmosphere of ${city}, visit key cultural spots, and taste authentic ${state} specialties.`
-      },
-      evening: {
-        activity: `Sunset & Nightlife Experience in ${city}`,
-        description: `Conclude Day ${dayNum} with a relaxing sunset stroll, local shopping, and an exquisite dinner for ${numTravelers} travelers.`
-      }
-    });
-  }
+  // Get curated day-by-day itinerary with exact tourist places, landmarks, timings, and map links
+  const itinerary = getCuratedItinerary(city, state, numDays, dailyBudget);
 
   return { foods, hotels, itinerary };
 };
@@ -138,11 +100,13 @@ export const generateTripPlan = async (req, res) => {
 
     let generatedData = null;
 
-    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.startsWith('AIzaSy')) {
+    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 15) {
       const prompt = `
 You are an expert AI travel planner for Indian tourism.
 Plan a highly detailed ${diffDays}-day ${tripType || 'leisure'} trip to ${city}, ${state} for ${travelers || 2} travelers.
 Total trip budget: ₹${budget || 15000}.
+
+CRITICAL REQUIREMENT: For every morning, afternoon, and evening session, you MUST provide the EXACT real-world tourist attraction, monument, landmark, beach, or heritage site in the "placeName" field (e.g., "Victoria Memorial", "Amber Fort", "Gateway of India", "Calangute Beach", "Dakshineswar Temple"). DO NOT use generic placeholders or general terms.
 
 Respond STRICTLY in valid JSON format with no markdown formatting or backticks. The JSON must exactly match the following structure:
 {
@@ -154,19 +118,40 @@ Respond STRICTLY in valid JSON format with no markdown formatting or backticks. 
   "itinerary": [
     {
       "day": 1,
-      "title": "Arrival & Exploration",
+      "title": "Iconic Heritage & Scenic Riverfront",
       "expense": "₹1500",
-      "morning": { "activity": "Activity Name", "description": "Details" },
-      "afternoon": { "activity": "Activity Name", "description": "Details" },
-      "evening": { "activity": "Activity Name", "description": "Details" }
+      "morning": {
+        "placeName": "Exact Famous Attraction Name",
+        "activity": "Activity / What to do at this place",
+        "description": "Engaging details of highlights, history, and photography tips",
+        "time": "09:00 AM - 12:00 PM",
+        "ticketPrice": "₹50 entry",
+        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Attraction+Name+City"
+      },
+      "afternoon": {
+        "placeName": "Exact Famous Attraction Name",
+        "activity": "Activity / What to do at this place",
+        "description": "Engaging details of highlights, history, and photography tips",
+        "time": "01:00 PM - 04:30 PM",
+        "ticketPrice": "Free entry",
+        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Attraction+Name+City"
+      },
+      "evening": {
+        "placeName": "Exact Famous Attraction Name",
+        "activity": "Activity / What to do at this place",
+        "description": "Engaging details of highlights, history, and photography tips",
+        "time": "05:00 PM - 08:00 PM",
+        "ticketPrice": "Free entry",
+        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Attraction+Name+City"
+      }
     }
   ]
 }
-Make sure the itinerary array has exactly ${diffDays} items inside it. Offer realistic daily expenses fitting within the total budget.
+Make sure the itinerary array has exactly ${diffDays} items inside it. Ensure realistic daily expenses fitting within the total budget.
 `;
 
       const candidateModels = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-flash-latest"];
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY.trim());
 
       for (const modelName of candidateModels) {
         try {
@@ -184,15 +169,29 @@ Make sure the itinerary array has exactly ${diffDays} items inside it. Offer rea
           }
 
           if (generatedData && Array.isArray(generatedData.itinerary) && generatedData.itinerary.length > 0) {
+            // Ensure map URLs exist for any AI returned places
+            generatedData.itinerary.forEach((day) => {
+              ['morning', 'afternoon', 'evening'].forEach((slot) => {
+                if (day[slot]) {
+                  if (!day[slot].mapUrl) {
+                    const q = (day[slot].placeName || day[slot].activity || city) + ' ' + city;
+                    day[slot].mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+                  }
+                }
+              });
+            });
             break;
           }
         } catch (mErr) {
           console.warn(`Attempt with ${modelName} did not succeed:`, mErr.message);
+          if (mErr.message.includes('401') || mErr.message.includes('API key') || mErr.message.includes('authentication')) {
+            break;
+          }
         }
       }
     }
 
-    if (!generatedData || !Array.isArray(generatedData.itinerary)) {
+    if (!generatedData || !Array.isArray(generatedData.itinerary) || generatedData.itinerary.length === 0) {
       console.log(`Generating curated comprehensive itinerary for ${city}, ${state} (${diffDays} days)...`);
       generatedData = generateFallbackItinerary(city, state, diffDays, budget, travelers, tripType);
     }

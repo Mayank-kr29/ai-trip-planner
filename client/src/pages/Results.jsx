@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
-import { MapPin, Sun, Moon, Coffee, Anchor, Utensils } from 'lucide-react';
+import { MapPin, Sun, Moon, Coffee, Anchor, Utensils, Clock, Ticket, ExternalLink, Compass } from 'lucide-react';
 import { saveTrip, updateTrip } from '../services/api';
 
 const Results = () => {
@@ -35,6 +35,91 @@ const Results = () => {
   const itinerary = tripData.itinerary || [];
   const foods = tripData.foods || [];
 
+  const renderItinerarySlot = (slotData, slotType, icon, iconBg, iconColor, typeLabel) => {
+    if (!slotData) return null;
+
+    // Gracefully determine place name and activity
+    const place = slotData.placeName || slotData.place || (slotData.activity ? slotData.activity : `${typeLabel} Exploration in ${tripData.city}`);
+    const activity = slotData.placeName && slotData.activity && slotData.placeName !== slotData.activity ? slotData.activity : null;
+    const description = slotData.description;
+    const time = slotData.time;
+    const ticketPrice = slotData.ticketPrice;
+
+    // Build Google Maps search link if not present
+    const queryTerm = `${place} ${tripData.city || ''} ${tripData.state || ''}`.trim();
+    const mapUrl = slotData.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(queryTerm)}`;
+
+    return (
+      <div className="itinerary-slot-card">
+        <div 
+          className="itinerary-slot-icon" 
+          style={{ 
+            background: iconBg, 
+            color: iconColor, 
+            border: `1px solid ${iconColor}40` 
+          }}
+        >
+          {icon}
+        </div>
+
+        <div className="itinerary-slot-content">
+          <div className="itinerary-slot-header">
+            <span 
+              className="itinerary-slot-type-pill" 
+              style={{ 
+                background: iconBg, 
+                color: iconColor, 
+                border: `1px solid ${iconColor}40` 
+              }}
+            >
+              {typeLabel}
+            </span>
+            
+            {time && (
+              <span className="itinerary-meta-pill">
+                <Clock size={13} color="var(--text-light)" /> {time}
+              </span>
+            )}
+          </div>
+
+          <div className="itinerary-place-title">
+            <MapPin size={18} color="var(--primary)" style={{ flexShrink: 0 }} />
+            <span>{place}</span>
+          </div>
+
+          {activity && (
+            <div className="itinerary-activity-title">
+              <Compass size={15} style={{ flexShrink: 0 }} />
+              <span>{activity}</span>
+            </div>
+          )}
+
+          {description && (
+            <p className="itinerary-desc">{description}</p>
+          )}
+
+          <div className="itinerary-meta-bar">
+            {ticketPrice && (
+              <span className="itinerary-meta-pill">
+                <Ticket size={14} color="var(--text-light)" /> {ticketPrice}
+              </span>
+            )}
+
+            <a 
+              href={mapUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="btn-map-link"
+              title={`View ${place} on Google Maps`}
+            >
+              <MapPin size={13} /> View on Map <ExternalLink size={12} />
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="container" style={{ padding: '40px 20px' }}>
       <div className="animate-fade-in-up">
@@ -49,14 +134,14 @@ const Results = () => {
           {/* Left Column - Hotels */}
           <div>
             <h2 style={{ marginBottom: '20px', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-pure)' }}>
-              <Anchor size={22} color="var(--accent-gold)" /> Recommended Hotels
+              <Anchor size={22} color="var(--text-pure)" /> Recommended Hotels
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {hotels.map((hotel, i) => (
                 <div key={i} className="glass-panel" style={{ padding: '20px' }}>
                   <h3 style={{ fontSize: '1.2rem', marginBottom: '5px', color: 'var(--text-pure)' }}>{hotel.name}</h3>
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '15px' }}>
-                    <span style={{ color: 'var(--accent-gold)', fontWeight: '600' }}>⭐ {hotel.rating}</span>
+                    <span style={{ color: 'var(--text-pure)', fontWeight: '600' }}>⭐ {hotel.rating}</span>
                     <span style={{ color: 'var(--text-light)' }}>{hotel.price}</span>
                   </div>
                   <a href={hotel.link} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ width: '100%', padding: '8px', textAlign: 'center' }}>View Deal</a>
@@ -68,7 +153,7 @@ const Results = () => {
             { foods.length > 0 && (
               <div style={{ marginTop: '40px' }}>
                 <h2 style={{ marginBottom: '20px', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-pure)' }}>
-                  <Utensils size={22} color="var(--accent-gold)" /> Famous Local Food
+                  <Utensils size={22} color="var(--text-pure)" /> Famous Local Food
                 </h2>
                 <div className="glass-panel" style={{ padding: '20px' }}>
                   <ul style={{ listStyleType: 'disc', paddingLeft: '20px', color: 'var(--text-light)', lineHeight: '1.8' }}>
@@ -84,13 +169,13 @@ const Results = () => {
           {/* Right Column - Itinerary */}
           <div>
             <h2 style={{ marginBottom: '20px', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-pure)' }}>
-              <MapPin size={22} color="var(--accent-gold)" /> Day-by-day Itinerary
+              <MapPin size={22} color="var(--text-pure)" /> Day-by-day Itinerary
             </h2>
 
-            <div className="glass-panel" style={{ padding: '30px', marginBottom: '20px' }}>
+            <div className="glass-panel" style={{ padding: '28px', marginBottom: '20px' }}>
               {itinerary.map((day, ix) => (
-                <div key={ix} style={{ marginBottom: '40px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px', marginBottom: '20px' }}>
+                <div key={ix} className="itinerary-day-block">
+                  <div className="itinerary-day-header">
                     <h3 style={{ color: 'var(--text-pure)', fontSize: '1.25rem', margin: 0, fontWeight: '700' }}>
                       Day {day.day}: {day.title}
                     </h3>
@@ -101,40 +186,31 @@ const Results = () => {
                     )}
                   </div>
                   
-                  {day.morning && (
-                    <div style={{ display: 'flex', gap: '20px', marginBottom: '26px' }}>
-                      <div style={{ background: 'rgba(212, 175, 55, 0.15)', color: 'var(--accent-gold)', padding: '12px', borderRadius: '50%', height: 'fit-content', border: '1px solid rgba(212, 175, 55, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Sun size={20} />
-                      </div>
-                      <div>
-                        <h4 style={{ fontSize: '1.05rem', marginBottom: '4px', color: 'var(--text-pure)' }}>Morning - {day.morning.activity}</h4>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>{day.morning.description}</p>
-                      </div>
-                    </div>
+                  {day.morning && renderItinerarySlot(
+                    day.morning, 
+                    'morning', 
+                    <Sun size={20} />, 
+                    'rgba(59, 130, 246, 0.12)', 
+                    '#3B82F6', 
+                    'Morning'
                   )}
 
-                  {day.afternoon && (
-                    <div style={{ display: 'flex', gap: '20px', marginBottom: '26px' }}>
-                      <div style={{ background: 'rgba(223, 230, 233, 0.08)', color: 'var(--text-light)', padding: '12px', borderRadius: '50%', height: 'fit-content', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Coffee size={20} />
-                      </div>
-                      <div>
-                        <h4 style={{ fontSize: '1.05rem', marginBottom: '4px', color: 'var(--text-pure)' }}>Afternoon - {day.afternoon.activity}</h4>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>{day.afternoon.description}</p>
-                      </div>
-                    </div>
+                  {day.afternoon && renderItinerarySlot(
+                    day.afternoon, 
+                    'afternoon', 
+                    <Coffee size={20} />, 
+                    'rgba(245, 158, 11, 0.12)', 
+                    '#D97706', 
+                    'Afternoon'
                   )}
 
-                  {day.evening && (
-                    <div style={{ display: 'flex', gap: '20px' }}>
-                      <div style={{ background: 'rgba(34, 40, 41, 0.8)', color: 'var(--text-dim)', padding: '12px', borderRadius: '50%', height: 'fit-content', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Moon size={20} />
-                      </div>
-                      <div>
-                        <h4 style={{ fontSize: '1.05rem', marginBottom: '4px', color: 'var(--text-pure)' }}>Evening - {day.evening.activity}</h4>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>{day.evening.description}</p>
-                      </div>
-                    </div>
+                  {day.evening && renderItinerarySlot(
+                    day.evening, 
+                    'evening', 
+                    <Moon size={20} />, 
+                    'rgba(139, 92, 246, 0.12)', 
+                    '#7C3AED', 
+                    'Evening'
                   )}
                 </div>
               ))}
@@ -159,3 +235,4 @@ const Results = () => {
 };
 
 export default Results;
+
